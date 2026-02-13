@@ -35,12 +35,28 @@ namespace ChurchSecurityScheduler.Services
             if (_sheetsService != null)
                 return _sheetsService;
 
-            var credentialsPath = _configuration["GoogleSheets:CredentialsPath"] ?? "credentials.json";
+            string jsonString;
+            
+            // Try to read from environment variable first (Cloud Run)
+            var credentialsJson = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
+            
+            if (!string.IsNullOrEmpty(credentialsJson))
+            {
+                // Running in Cloud Run - use environment variable
+                jsonString = credentialsJson;
+                _logger.LogInformation("Using credentials from environment variable");
+            }
+            else
+            {
+                // Running locally - use file
+                var credentialsPath = _configuration["GoogleSheets:CredentialsPath"] ?? "credentials.json";
+                jsonString = await File.ReadAllTextAsync(credentialsPath);
+                _logger.LogInformation("Using credentials from file");
+            }
 
-            // Read the JSON file and create credential from JSON string
+            // Read the JSON and create credential from JSON string
             // Note: FromJson shows deprecation warning, but recommended replacements don't exist in current API version
 #pragma warning disable CS0618
-            var jsonString = await File.ReadAllTextAsync(credentialsPath);
             var credential = GoogleCredential.FromJson(jsonString)
                 .CreateScoped(SheetsService.Scope.Spreadsheets);
 #pragma warning restore CS0618
