@@ -11,13 +11,13 @@ namespace ChurchSecurityScheduler.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<GoogleSheetsService> _logger;
         private SheetsService? _sheetsService;
-        private List<string> _positions; // Changed back to non-nullable, initialized in constructor
+        // private List<string> _positions; // Changed back to non-nullable, initialized in constructor
 
         public GoogleSheetsService(IConfiguration configuration, ILogger<GoogleSheetsService> logger)
         {
             _configuration = configuration;
             _logger = logger;
-            _positions = new List<string>();
+            // _positions = new List<string>();
         }
 
         private async Task<SheetsService> GetSheetsServiceAsync()
