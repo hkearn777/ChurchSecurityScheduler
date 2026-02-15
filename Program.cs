@@ -24,108 +24,17 @@ namespace ChurchSecurityScheduler
 <html>
 <head>
     <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
     <title>Church Security Scheduler</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            padding: 20px; 
-            background: #f5f5f5; 
-            margin: 0;
-        }
-        .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }
-        h1 { 
-            color: #333; 
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        h3 {
-            color: #444;
-            margin-top: 25px;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
-        }
-        .date-list { 
-            margin: 20px 0; 
-        }
-        .date-item { 
-            padding: 15px; 
-            margin: 10px 0; 
-            background: #f8f9fa; 
-            border-left: 4px solid #4285f4; 
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .date-item:hover { 
-            background: #e9ecef; 
-        }
-        .btn { 
-            display: inline-block; 
-            padding: 12px 24px; 
-            background: #4285f4; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 4px; 
-            margin-top: 20px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .btn:hover { 
-            background: #3367d6; 
-        }
-        input[type='date'] { 
-            padding: 12px; 
-            font-size: 16px; 
-            border: 1px solid #ddd; 
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        form {
-            margin-bottom: 10px;
-        }
-
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 20px;
-                border-radius: 4px;
-            }
-            h1 {
-                font-size: 24px;
-            }
-            h3 {
-                font-size: 18px;
-            }
-            .date-item {
-                padding: 18px;
-                font-size: 18px;
-                margin: 12px 0;
-            }
-            .btn {
-                width: 100%;
-                padding: 16px;
-                font-size: 18px;
-                margin-top: 15px;
-            }
-            input[type='date'] {
-                padding: 16px;
-                font-size: 18px;
-            }
-        }
+        body { font-family: Arial, sans-serif; padding: 50px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .date-list { margin: 20px 0; }
+        .date-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-left: 4px solid #4285f4; cursor: pointer; }
+        .date-item:hover { background: #e9ecef; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+        .btn:hover { background: #3367d6; }
+        input[type='date'] { padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -192,170 +101,30 @@ namespace ChurchSecurityScheduler
 <html>
 <head>
     <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
     <title>Security Schedule - {date}</title>
     <style>
-        body {{ 
-            font-family: Arial, sans-serif; 
-            padding: 20px; 
-            background: #f5f5f5;
-            margin: 0;
-        }}
-        .container {{ 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }}
-        h1 {{ 
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }}
-        table {{ 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin-top: 20px; 
-        }}
-        th {{ 
-            background: #4285f4; 
-            color: white; 
-            padding: 15px; 
-            text-align: left; 
-            font-size: 16px; 
-        }}
-        td {{ 
-            padding: 15px; 
-            border: 1px solid #ddd; 
-        }}
-        tr:hover {{ 
-            background: #f8f9fa; 
-        }}
-        .position-cell {{ 
-            font-weight: bold; 
-            background: #f8f9fa; 
-        }}
-        .slot-cell {{ 
-            text-align: center; 
-            min-height: 50px; 
-        }}
-        .volunteer-name {{ 
-            color: #2c5282; 
-            font-weight: bold; 
-            font-size: 16px;
-        }}
-        .empty-slot {{ 
-            color: #999; 
-            font-style: italic; 
-        }}
-        .back-link {{ 
-            display: inline-block; 
-            margin-bottom: 20px; 
-            color: #4285f4; 
-            text-decoration: none;
-            font-size: 16px;
-        }}
-        .back-link:hover {{ 
-            text-decoration: underline; 
-        }}
-        .btn {{ 
-            padding: 10px 20px; 
-            background: #4285f4; 
-            color: white; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            margin: 5px;
-            font-size: 14px;
-        }}
-        .btn:hover {{
-            background: #3367d6;
-        }}
-        .btn-clear {{ 
-            background: #d93025; 
-        }}
-        .btn-clear:hover {{
-            background: #c5221f;
-        }}
-
-        @media (max-width: 768px) {{
-            body {{
-                padding: 10px;
-            }}
-            .container {{
-                padding: 15px;
-                border-radius: 4px;
-            }}
-            h1 {{
-                font-size: 22px;
-                margin-bottom: 15px;
-            }}
-            .back-link {{
-                font-size: 18px;
-                margin-bottom: 15px;
-            }}
-            
-            table, thead, tbody, th, td, tr {{
-                display: block;
-            }}
-            thead tr {{
-                display: none;
-            }}
-            tr {{
-                margin-bottom: 25px;
-                border: 2px solid #4285f4;
-                border-radius: 8px;
-                background: white;
-                padding: 15px;
-            }}
-            tr:hover {{
-                background: white;
-            }}
-            .position-cell {{
-                font-size: 20px;
-                background: #4285f4;
-                color: white;
-                padding: 12px;
-                border-radius: 4px;
-                margin-bottom: 15px;
-                text-align: center;
-            }}
-            .slot-cell {{
-                border: none;
-                padding: 12px 0;
-                margin-bottom: 12px;
-                border-bottom: 1px solid #eee;
-            }}
-            .slot-cell:last-child {{
-                border-bottom: none;
-            }}
-            .slot-cell::before {{
-                content: attr(data-label);
-                font-weight: bold;
-                display: block;
-                margin-bottom: 8px;
-                color: #666;
-                font-size: 16px;
-            }}
-            .volunteer-name {{
-                font-size: 18px;
-                display: block;
-                margin-bottom: 10px;
-            }}
-            .empty-slot {{
-                font-size: 16px;
-                display: block;
-                margin-bottom: 10px;
-            }}
-            .btn {{
-                width: 100%;
-                padding: 16px;
-                font-size: 18px;
-                margin: 8px 0;
-            }}
-        }}
+        body {{ font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }}
+        .container {{ max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        h1 {{ color: #333; }}
+        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; }}
+        th {{ background: #4285f4; color: white; padding: 15px; text-align: left; font-size: 16px; }}
+        td {{ padding: 15px; border: 1px solid #ddd; vertical-align: top; }}
+        tr:hover {{ background: #f8f9fa; }}
+        .position-cell {{ font-weight: bold; background: #f8f9fa; }}
+        .slot-cell {{ min-height: 50px; }}
+        .volunteer-list {{ margin: 10px 0; }}
+        .volunteer-item {{ display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 5px 0; background: #e3f2fd; border-radius: 4px; }}
+        .volunteer-name {{ color: #2c5282; font-weight: bold; flex-grow: 1; }}
+        .empty-slot {{ color: #999; font-style: italic; padding: 10px; }}
+        .back-link {{ display: inline-block; margin-bottom: 20px; color: #4285f4; text-decoration: none; }}
+        .back-link:hover {{ text-decoration: underline; }}
+        .btn {{ padding: 8px 16px; background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }}
+        .btn:hover {{ background: #3367d6; }}
+        .btn-small {{ padding: 5px 10px; font-size: 12px; }}
+        .btn-remove {{ background: #d93025; }}
+        .btn-remove:hover {{ background: #b52a1f; }}
+        .btn-add {{ background: #34a853; width: 100%; margin-top: 5px; }}
+        .btn-add:hover {{ background: #2d8e47; }}
     </style>
 </head>
 <body>
@@ -363,61 +132,62 @@ namespace ChurchSecurityScheduler
         <a href='/' class='back-link'>← Back to Dates</a>
         <h1>🛡️ Security Schedule - {date}</h1>
         <table>
-            <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>8:30 AM</th>
-                    <th>9:45 AM</th>
-                    <th>11:00 AM</th>
-                </tr>
-            </thead>
-            <tbody>";
+            <tr>
+                <th>Position</th>
+                <th>8:30 AM</th>
+                <th>9:45 AM</th>
+                <th>11:00 AM</th>
+            </tr>";
 
                 foreach (var pos in schedule.Positions)
                 {
                     var position = pos.Position;
-                    var positionId = position.Replace(" ", "");
-                    var slot830 = pos.TimeSlot8_30;
-                    var slot945 = pos.TimeSlot9_45;
-                    var slot1100 = pos.TimeSlot11_00;
+                    
+                    // Parse comma-separated volunteers
+                    var volunteers830 = string.IsNullOrWhiteSpace(pos.TimeSlot8_30) 
+                        ? new List<string>() 
+                        : pos.TimeSlot8_30.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
+                    
+                    var volunteers945 = string.IsNullOrWhiteSpace(pos.TimeSlot9_45) 
+                        ? new List<string>() 
+                        : pos.TimeSlot9_45.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
+                    
+                    var volunteers1100 = string.IsNullOrWhiteSpace(pos.TimeSlot11_00) 
+                        ? new List<string>() 
+                        : pos.TimeSlot11_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
 
                     html += $@"
             <tr>
                 <td class='position-cell'>{position}</td>
-                <td class='slot-cell' data-label='8:30 AM'>
-                    {(string.IsNullOrEmpty(slot830) ? "<span class='empty-slot'>Available</span>" : $"<span class='volunteer-name'>{slot830}</span>")}
-                    <button class='btn' onclick=""editSlot('{position}', '8:30', '{slot830}')"">Edit</button>
-                    {(string.IsNullOrEmpty(slot830) ? "" : $"<button class='btn btn-clear' onclick=\"clearSlot('{position}', '8:30')\">Clear</button>")}
+                <td class='slot-cell'>
+                    {GenerateVolunteerListHtml(date, position, "8:30", volunteers830)}
                 </td>
-                <td class='slot-cell' data-label='9:45 AM'>
-                    {(string.IsNullOrEmpty(slot945) ? "<span class='empty-slot'>Available</span>" : $"<span class='volunteer-name'>{slot945}</span>")}
-                    <button class='btn' onclick=""editSlot('{position}', '9:45', '{slot945}')"">Edit</button>
-                    {(string.IsNullOrEmpty(slot945) ? "" : $"<button class='btn btn-clear' onclick=\"clearSlot('{position}', '9:45')\">Clear</button>")}
+                <td class='slot-cell'>
+                    {GenerateVolunteerListHtml(date, position, "9:45", volunteers945)}
                 </td>
-                <td class='slot-cell' data-label='11:00 AM'>
-                    {(string.IsNullOrEmpty(slot1100) ? "<span class='empty-slot'>Available</span>" : $"<span class='volunteer-name'>{slot1100}</span>")}
-                    <button class='btn' onclick=""editSlot('{position}', '11:00', '{slot1100}')"">Edit</button>
-                    {(string.IsNullOrEmpty(slot1100) ? "" : $"<button class='btn btn-clear' onclick=\"clearSlot('{position}', '11:00')\">Clear</button>")}
+                <td class='slot-cell'>
+                    {GenerateVolunteerListHtml(date, position, "11:00", volunteers1100)}
                 </td>
             </tr>";
                 }
 
                 html += $@"
-            </tbody>
         </table>
     </div>
     <script>
-        function editSlot(position, timeSlot, currentName) {{
-
-            const name = prompt('Enter volunteer name:', currentName);
-            if (name !== null) {{
-                window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=' + encodeURIComponent(name);
+        function addPerson(position, timeSlot, currentNames) {{
+            const name = prompt('Enter volunteer name:');
+            if (name !== null && name.trim() !== '') {{
+                const newNames = currentNames ? currentNames + ', ' + name.trim() : name.trim();
+                window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=' + encodeURIComponent(newNames);
             }}
         }}
 
-        function clearSlot(position, timeSlot) {{
-            if (confirm('Clear this assignment?')) {{
-                window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=';
+        function removePerson(position, timeSlot, personToRemove, currentNames) {{
+            if (confirm('Remove ' + personToRemove + ' from this position?')) {{
+                const names = currentNames.split(',').map(n => n.trim()).filter(n => n !== personToRemove);
+                const newNames = names.join(', ');
+                window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=' + encodeURIComponent(newNames);
             }}
         }}
     </script>
@@ -439,6 +209,37 @@ namespace ChurchSecurityScheduler
             });
 
             app.Run();
+        }
+
+        private static string GenerateVolunteerListHtml(string date, string position, string timeSlot, List<string> volunteers)
+        {
+            var html = "<div class='volunteer-list'>";
+            
+            if (volunteers.Count == 0)
+            {
+                html += "<div class='empty-slot'>No one assigned</div>";
+            }
+            else
+            {
+                var currentNames = string.Join(", ", volunteers);
+                foreach (var volunteer in volunteers)
+                {
+                    var escapedVolunteer = volunteer.Replace("'", "\\'");
+                    var escapedNames = currentNames.Replace("'", "\\'");
+                    html += $@"
+                    <div class='volunteer-item'>
+                        <span class='volunteer-name'>{volunteer}</span>
+                        <button class='btn btn-small btn-remove' onclick=""removePerson('{position}', '{timeSlot}', '{escapedVolunteer}', '{escapedNames}')"">Remove</button>
+                    </div>";
+                }
+            }
+            
+            var currentNamesForAdd = volunteers.Count > 0 ? string.Join(", ", volunteers).Replace("'", "\\'") : "";
+            html += $@"
+                <button class='btn btn-add' onclick=""addPerson('{position}', '{timeSlot}', '{currentNamesForAdd}')"">+ Add Person</button>
+            </div>";
+            
+            return html;
         }
     }
 }
