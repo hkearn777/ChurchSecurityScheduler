@@ -252,13 +252,34 @@ namespace ChurchSecurityScheduler.Services
         {
             var service = await GetSheetsServiceAsync();
             var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
-            var positions = await LoadPositionsFromSheetAsync(); // Load from sheet!
 
             try
             {
-                // Find the row for this position
-                var rowIndex = positions.IndexOf(position) + 3; // +3 because: 1-based, +1 for title row, +1 for header row
-                
+                // Read the actual sheet to find the position's row
+                var schedule = await GetScheduleForDateAsync(date);
+                if (schedule == null)
+                {
+                    _logger.LogWarning($"Schedule not found for date: {date}");
+                    return false;
+                }
+
+                // Find the exact row index by searching through actual data
+                var rowIndex = -1;
+                for (int i = 0; i < schedule.Positions.Count; i++)
+                {
+                    if (schedule.Positions[i].Position.Equals(position, StringComparison.OrdinalIgnoreCase))
+                    {
+                        rowIndex = i + 3; // +3 because: 1-based, +1 for title row, +1 for header row
+                        break;
+                    }
+                }
+
+                if (rowIndex == -1)
+                {
+                    _logger.LogWarning($"Position not found in schedule: {position}");
+                    return false;
+                }
+
                 // Determine column based on time slot
                 var column = timeSlot switch
                 {
@@ -278,12 +299,12 @@ namespace ChurchSecurityScheduler.Services
                 updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
                 await updateRequest.ExecuteAsync();
 
-                _logger.LogInformation($"Updated {position} at {timeSlot} for {date} with {volunteerName}");
+                _logger.LogInformation($"Updated {position} at {timeSlot} for {date} to {volunteerName} in cell {column}{rowIndex}");
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error updating position");
+                _logger.LogError(ex, $"Error updating position: {position} at {timeSlot}");
                 return false;
             }
         }
