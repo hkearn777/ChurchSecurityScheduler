@@ -11,18 +11,7 @@ namespace ChurchSecurityScheduler.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<GoogleSheetsService> _logger;
         private SheetsService? _sheetsService;
-
-        private readonly List<string> _positions = new()
-        {
-            "Worship Entry Door",
-            "Preschool Door",
-            "Covered Parking",
-            "Worship Center Left",
-            "Worship Center Right",
-            "Welcome Center",
-            "Discipleship Entry",
-            "Fellowship Hall Entry"
-        };
+        private List<string>? _positions; // Changed to nullable, loaded dynamically
 
         public GoogleSheetsService(IConfiguration configuration, ILogger<GoogleSheetsService> logger)
         {
@@ -70,6 +59,73 @@ namespace ChurchSecurityScheduler.Services
             return _sheetsService;
         }
 
+        // NEW: Load positions from the "Positions" tab
+        private async Task<List<string>> LoadPositionsFromSheetAsync()
+        {
+            if (_positions != null)
+                return _positions; // Return cached positions
+
+            var service = await GetSheetsServiceAsync();
+            var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+            var range = "Positions!A:A"; // Read column A from "Positions" tab
+
+            try
+            {
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, range);
+                var response = await request.ExecuteAsync();
+                var values = response.Values;
+
+                _positions = new List<string>();
+
+                if (values != null && values.Count > 0)
+                {
+                    foreach (var row in values)
+                    {
+                        if (row.Count > 0 && !string.IsNullOrWhiteSpace(row[0].ToString()))
+                        {
+                            _positions.Add(row[0].ToString()!);
+                        }
+                    }
+                }
+
+                // Fallback: If no positions found in sheet, use defaults
+                if (_positions.Count == 0)
+                {
+                    _logger.LogWarning("No positions found in 'Positions' tab, using defaults");
+                    _positions = new List<string>
+                    {
+                        "Worship Entry Door",
+                        "Preschool Door",
+                        "Covered Parking",
+                        "Worship Center Left",
+                        "Worship Center Right",
+                        "Welcome Center",
+                        "Discipleship Entry",
+                        "Fellowship Hall Entry"
+                    };
+                }
+
+                _logger.LogInformation($"Loaded {_positions.Count} positions from sheet");
+                return _positions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading positions from sheet, using defaults");
+                _positions = new List<string>
+                {
+                    "Worship Entry Door",
+                    "Preschool Door",
+                    "Covered Parking",
+                    "Worship Center Left",
+                    "Worship Center Right",
+                    "Welcome Center",
+                    "Discipleship Entry",
+                    "Fellowship Hall Entry"
+                };
+                return _positions;
+            }
+        }
+
         public async Task<List<string>> GetAvailableDatesAsync()
         {
             var service = await GetSheetsServiceAsync();
@@ -80,7 +136,8 @@ namespace ChurchSecurityScheduler.Services
 
             foreach (var sheet in spreadsheet.Sheets)
             {
-                if (sheet.Properties.Title != "Template")
+                // Exclude "Positions" tab and "Template" from date list
+                if (sheet.Properties.Title != "Template" && sheet.Properties.Title != "Positions")
                 {
                     dates.Add(sheet.Properties.Title);
                 }
@@ -139,6 +196,7 @@ namespace ChurchSecurityScheduler.Services
         {
             var service = await GetSheetsServiceAsync();
             var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+            var positions = await LoadPositionsFromSheetAsync(); // Load from sheet!
 
             try
             {
@@ -163,7 +221,7 @@ namespace ChurchSecurityScheduler.Services
                 await service.Spreadsheets.BatchUpdate(addSheetRequest, spreadsheetId).ExecuteAsync();
 
                 // Initialize sheet with headers and positions
-                var range = $"'{date}'!A1:D10";
+                var range = $"'{date}'!A1:D{positions.Count + 2}"; // Dynamic range based on position count
                 var valueRange = new ValueRange
                 {
                     Values = new List<IList<object>>
@@ -173,8 +231,8 @@ namespace ChurchSecurityScheduler.Services
                     }
                 };
 
-                // Add all positions
-                foreach (var position in _positions)
+                // Add all positions from the Positions tab
+                foreach (var position in positions)
                 {
                     valueRange.Values.Add(new List<object> { position, "", "", "" });
                 }
@@ -183,7 +241,7 @@ namespace ChurchSecurityScheduler.Services
                 updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
                 await updateRequest.ExecuteAsync();
 
-                _logger.LogInformation($"Created new sheet for date: {date}");
+                _logger.LogInformation($"Created new sheet for date: {date} with {positions.Count} positions");
                 return true;
             }
             catch (Exception ex)
@@ -197,11 +255,12 @@ namespace ChurchSecurityScheduler.Services
         {
             var service = await GetSheetsServiceAsync();
             var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+            var positions = await LoadPositionsFromSheetAsync(); // Load from sheet!
 
             try
             {
                 // Find the row for this position
-                var rowIndex = _positions.IndexOf(position) + 3; // +3 because: 1-based, +1 for title row, +1 for header row
+                var rowIndex = positions.IndexOf(position) + 3; // +3 because: 1-based, +1 for title row, +1 for header row
                 
                 // Determine column based on time slot
                 var column = timeSlot switch
@@ -232,6 +291,10 @@ namespace ChurchSecurityScheduler.Services
             }
         }
 
-        public List<string> GetPositions() => _positions;
+        // PUBLIC method to get positions (in case you need it elsewhere)
+        public async Task<List<string>> GetPositionsAsync()
+        {
+            return await LoadPositionsFromSheetAsync();
+        }
     }
 }
