@@ -24,17 +24,27 @@ namespace ChurchSecurityScheduler
 <html>
 <head>
     <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
     <title>Church Security Scheduler</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 50px; background: #f5f5f5; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; font-size: 1.8em; margin-top: 0; }
+        h3 { font-size: 1.2em; }
+        p { font-size: 1em; }
         .date-list { margin: 20px 0; }
-        .date-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-left: 4px solid #4285f4; cursor: pointer; }
+        .date-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-left: 4px solid #4285f4; cursor: pointer; font-size: 1em; }
         .date-item:hover { background: #e9ecef; }
-        .btn { display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; border: none; font-size: 1em; cursor: pointer; }
         .btn:hover { background: #3367d6; }
-        input[type='date'] { padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; }
+        input[type='date'] { padding: 10px; font-size: 1em; border: 1px solid #ddd; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; }
+        
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            h1 { font-size: 1.5em; }
+            input[type='date'] { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -101,36 +111,112 @@ namespace ChurchSecurityScheduler
 <html>
 <head>
     <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
     <title>Security Schedule - {date}</title>
     <style>
-        body {{ font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }}
-        .container {{ max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        h1 {{ color: #333; }}
-        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; }}
-        th {{ background: #4285f4; color: white; padding: 15px; text-align: left; font-size: 16px; }}
-        td {{ padding: 15px; border: 1px solid #ddd; vertical-align: top; }}
+        body {{ font-family: Arial, sans-serif; padding: 10px; background: #f5f5f5; margin: 0; }}
+        .container {{ max-width: 1400px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        h1 {{ color: #333; font-size: 1.5em; margin-top: 0; }}
+        .table-wrapper {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
+        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; min-width: 600px; }}
+        th {{ background: #4285f4; color: white; padding: 12px 8px; text-align: left; font-size: 0.9em; }}
+        td {{ padding: 10px 8px; border: 1px solid #ddd; vertical-align: top; }}
         tr:hover {{ background: #f8f9fa; }}
-        .position-cell {{ font-weight: bold; background: #f8f9fa; }}
+        .position-cell {{ font-weight: bold; background: #f8f9fa; font-size: 0.9em; }}
         .slot-cell {{ min-height: 50px; }}
-        .volunteer-list {{ margin: 10px 0; }}
-        .volunteer-item {{ display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 5px 0; background: #e3f2fd; border-radius: 4px; }}
-        .volunteer-name {{ color: #2c5282; font-weight: bold; flex-grow: 1; }}
-        .empty-slot {{ color: #999; font-style: italic; padding: 10px; }}
-        .back-link {{ display: inline-block; margin-bottom: 20px; color: #4285f4; text-decoration: none; }}
+        .volunteer-list {{ margin: 5px 0; }}
+        .volunteer-item {{ display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 5px 0; background: #e3f2fd; border-radius: 4px; gap: 5px; }}
+        .volunteer-name {{ color: #2c5282; font-weight: bold; flex-grow: 1; font-size: 0.9em; word-break: break-word; }}
+        .empty-slot {{ color: #999; font-style: italic; padding: 10px; font-size: 0.85em; }}
+        .back-link {{ display: inline-block; margin-bottom: 15px; color: #4285f4; text-decoration: none; font-size: 1em; }}
         .back-link:hover {{ text-decoration: underline; }}
-        .btn {{ padding: 8px 16px; background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }}
+        .btn {{ padding: 8px 12px; background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; white-space: nowrap; }}
         .btn:hover {{ background: #3367d6; }}
-        .btn-small {{ padding: 5px 10px; font-size: 12px; }}
+        .btn-small {{ padding: 5px 8px; font-size: 0.75em; }}
         .btn-remove {{ background: #d93025; }}
         .btn-remove:hover {{ background: #b52a1f; }}
         .btn-add {{ background: #34a853; width: 100%; margin-top: 5px; }}
         .btn-add:hover {{ background: #2d8e47; }}
+        
+        @media (max-width: 768px) {{
+            body {{
+                padding: 5px;
+            }}
+            .container {{
+                padding: 10px;
+                border-radius: 4px;
+            }}
+            h1 {{
+                font-size: 1.2em;
+            }}
+            th {{
+                padding: 8px 4px;
+                font-size: 0.8em;
+            }}
+            td {{
+                padding: 8px 4px;
+            }}
+            .position-cell {{
+                font-size: 0.8em;
+            }}
+            .volunteer-name {{
+                font-size: 0.85em;
+            }}
+            .volunteer-item {{
+                padding: 6px;
+            }}
+            .btn {{
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }}
+            .btn-small {{
+                padding: 4px 6px;
+                font-size: 0.7em;
+            }}
+            .btn-add {{
+                font-size: 0.8em;
+            }}
+            table {{
+                min-width: 500px;
+            }}
+        }}
+        
+        @media (max-width: 480px) {{
+            h1 {{
+                font-size: 1em;
+            }}
+            th {{
+                padding: 6px 3px;
+                font-size: 0.75em;
+            }}
+            td {{
+                padding: 6px 3px;
+            }}
+            .position-cell {{
+                font-size: 0.75em;
+            }}
+            .volunteer-name {{
+                font-size: 0.8em;
+            }}
+            .btn {{
+                font-size: 0.75em;
+                padding: 5px 8px;
+            }}
+            .btn-small {{
+                padding: 3px 5px;
+                font-size: 0.65em;
+            }}
+            table {{
+                min-width: 450px;
+            }}
+        }}
     </style>
 </head>
 <body>
     <div class='container'>
         <a href='/' class='back-link'>← Back to Dates</a>
         <h1>🛡️ Security Schedule - {date}</h1>
+        <div class='table-wrapper'>
         <table>
             <tr>
                 <th>Position</th>
@@ -142,18 +228,18 @@ namespace ChurchSecurityScheduler
                 foreach (var pos in schedule.Positions)
                 {
                     var position = pos.Position;
-                    
+
                     // Parse comma-separated volunteers
-                    var volunteers830 = string.IsNullOrWhiteSpace(pos.TimeSlot8_30) 
-                        ? new List<string>() 
+                    var volunteers830 = string.IsNullOrWhiteSpace(pos.TimeSlot8_30)
+                        ? new List<string>()
                         : pos.TimeSlot8_30.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
-                    
-                    var volunteers945 = string.IsNullOrWhiteSpace(pos.TimeSlot9_45) 
-                        ? new List<string>() 
+
+                    var volunteers945 = string.IsNullOrWhiteSpace(pos.TimeSlot9_45)
+                        ? new List<string>()
                         : pos.TimeSlot9_45.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
-                    
-                    var volunteers1100 = string.IsNullOrWhiteSpace(pos.TimeSlot11_00) 
-                        ? new List<string>() 
+
+                    var volunteers1100 = string.IsNullOrWhiteSpace(pos.TimeSlot11_00)
+                        ? new List<string>()
                         : pos.TimeSlot11_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
 
                     html += $@"
@@ -173,6 +259,7 @@ namespace ChurchSecurityScheduler
 
                 html += $@"
         </table>
+        </div>
     </div>
     <script>
         function addPerson(position, timeSlot, currentNames) {{
