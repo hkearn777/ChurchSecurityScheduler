@@ -10,14 +10,6 @@ namespace ChurchSecurityScheduler.Models
         public string? Notes { get; set; }
     }
 
-    public class SecurityPosition
-    {
-        public string Position { get; set; } = string.Empty;
-        public string TimeSlot8_30 { get; set; } = string.Empty;
-        public string TimeSlot9_45 { get; set; } = string.Empty;
-        public string TimeSlot11_00 { get; set; } = string.Empty;
-    }
-
     public class ScheduleSheet
     {
         public string Date { get; set; } = string.Empty;

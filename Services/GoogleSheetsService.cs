@@ -147,7 +147,7 @@ namespace ChurchSecurityScheduler.Services
         {
             var service = await GetSheetsServiceAsync();
             var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
-            var range = $"'{date}'!A1:D10";
+            var range = $"'{date}'!A1:E10";
 
             try
             {
@@ -175,7 +175,8 @@ namespace ChurchSecurityScheduler.Services
                             Position = row.Count > 0 ? row[0].ToString() ?? "" : "",
                             TimeSlot8_30 = row.Count > 1 ? row[1].ToString() ?? "" : "",
                             TimeSlot9_45 = row.Count > 2 ? row[2].ToString() ?? "" : "",
-                            TimeSlot11_00 = row.Count > 3 ? row[3].ToString() ?? "" : ""
+                            TimeSlot11_00 = row.Count > 3 ? row[3].ToString() ?? "" : "",
+                            TimeSlot6_00 = row.Count > 4 ? row[4].ToString() ?? "" : ""
                         });
                     }
                 }
@@ -218,20 +219,20 @@ namespace ChurchSecurityScheduler.Services
                 await service.Spreadsheets.BatchUpdate(addSheetRequest, spreadsheetId).ExecuteAsync();
 
                 // Initialize sheet with headers and positions
-                var range = $"'{date}'!A1:D{positions.Count + 2}"; // Dynamic range based on position count
+                var range = $"'{date}'!A1:E{positions.Count + 2}"; // Dynamic range based on position count (now includes E column)
                 var valueRange = new ValueRange
                 {
                     Values = new List<IList<object>>
                     {
-                        new List<object> { $"Security Schedule - {date}", "", "", "" },
-                        new List<object> { "Position", "8:30 AM", "9:45 AM", "11:00 AM" }
+                        new List<object> { $"Security Schedule - {date}", "", "", "", "" },
+                        new List<object> { "Position", "8:30 AM", "9:45 AM", "11:00 AM", "6:00 PM" }
                     }
                 };
 
                 // Add all positions from the Positions tab
                 foreach (var position in positions)
                 {
-                    valueRange.Values.Add(new List<object> { position, "", "", "" });
+                    valueRange.Values.Add(new List<object> { position, "", "", "", "" });
                 }
 
                 var updateRequest = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, range);
@@ -286,6 +287,7 @@ namespace ChurchSecurityScheduler.Services
                     "8:30" => "B",
                     "9:45" => "C",
                     "11:00" => "D",
+                    "6:00" => "E",
                     _ => "B"
                 };
 

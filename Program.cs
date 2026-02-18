@@ -118,7 +118,7 @@ namespace ChurchSecurityScheduler
         .container {{ max-width: 1400px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
         h1 {{ color: #333; font-size: 1.5em; margin-top: 0; }}
         .table-wrapper {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
-        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; min-width: 600px; }}
+        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; min-width: 700px; }}
         th {{ background: #4285f4; color: white; padding: 12px 8px; text-align: left; font-size: 0.9em; }}
         td {{ padding: 10px 8px; border: 1px solid #ddd; vertical-align: top; }}
         tr:hover {{ background: #f8f9fa; }}
@@ -177,7 +177,7 @@ namespace ChurchSecurityScheduler
                 font-size: 0.8em;
             }}
             table {{
-                min-width: 500px;
+                min-width: 600px;
             }}
         }}
         
@@ -207,7 +207,7 @@ namespace ChurchSecurityScheduler
                 font-size: 0.65em;
             }}
             table {{
-                min-width: 450px;
+                min-width: 550px;
             }}
         }}
     </style>
@@ -223,6 +223,7 @@ namespace ChurchSecurityScheduler
                 <th>8:30 AM</th>
                 <th>9:45 AM</th>
                 <th>11:00 AM</th>
+                <th>6:00 PM</th>
             </tr>";
 
                 foreach (var pos in schedule.Positions)
@@ -242,6 +243,10 @@ namespace ChurchSecurityScheduler
                         ? new List<string>()
                         : pos.TimeSlot11_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
 
+                    var volunteers600 = string.IsNullOrWhiteSpace(pos.TimeSlot6_00)
+                        ? new List<string>()
+                        : pos.TimeSlot6_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
+
                     html += $@"
             <tr>
                 <td class='position-cell'>{position}</td>
@@ -253,6 +258,9 @@ namespace ChurchSecurityScheduler
                 </td>
                 <td class='slot-cell'>
                     {GenerateVolunteerListHtml(date, position, "11:00", volunteers1100)}
+                </td>
+                <td class='slot-cell'>
+                    {GenerateVolunteerListHtml(date, position, "6:00", volunteers600)}
                 </td>
             </tr>";
                 }
