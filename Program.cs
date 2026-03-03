@@ -35,6 +35,7 @@ namespace ChurchSecurityScheduler
         .date-list { margin: 20px 0; }
         .date-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-left: 4px solid #4285f4; cursor: pointer; font-size: 1em; }
         .date-item:hover { background: #e9ecef; }
+        .day-of-week { color: #666; font-weight: normal; margin-left: 10px; }
         .btn { display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; border: none; font-size: 1em; cursor: pointer; }
         .btn:hover { background: #3367d6; }
         input[type='date'] { padding: 10px; font-size: 1em; border: 1px solid #ddd; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; }
@@ -69,7 +70,9 @@ namespace ChurchSecurityScheduler
                 {
                     foreach (var date in dates)
                     {
-                        html += $"<div class='date-item' onclick=\"window.location.href='/schedule/{date}'\">{date}</div>";
+                        var dateObj = DateTime.Parse(date);
+                        var dayOfWeek = dateObj.ToString("dddd");
+                        html += $"<div class='date-item' onclick=\"window.location.href='/schedule/{date}'\">{date} <span class='day-of-week'>({dayOfWeek})</span></div>";
                     }
                 }
 
