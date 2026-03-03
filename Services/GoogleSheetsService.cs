@@ -147,7 +147,7 @@ namespace ChurchSecurityScheduler.Services
         {
             var service = await GetSheetsServiceAsync();
             var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
-            var range = $"'{date}'!A:D"; // ✅ Read all rows in columns A-D
+            var range = $"'{date}'!A:E"; // ✅ Changed from A:D to A:E
 
             try
             {
@@ -176,7 +176,8 @@ namespace ChurchSecurityScheduler.Services
                             Position = row.Count > 0 ? row[0].ToString() ?? "" : "",
                             TimeSlot8_30 = row.Count > 1 ? row[1].ToString() ?? "" : "",
                             TimeSlot9_45 = row.Count > 2 ? row[2].ToString() ?? "" : "",
-                            TimeSlot11_00 = row.Count > 3 ? row[3].ToString() ?? "" : ""
+                            TimeSlot11_00 = row.Count > 3 ? row[3].ToString() ?? "" : "",
+                            TimeSlot6_00 = row.Count > 4 ? row[4].ToString() ?? "" : ""  // ✅ Add this line
                         });
                     }
                 }

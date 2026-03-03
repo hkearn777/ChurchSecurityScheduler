@@ -120,11 +120,38 @@ namespace ChurchSecurityScheduler
         body {{ font-family: Arial, sans-serif; padding: 10px; background: #f5f5f5; margin: 0; }}
         .container {{ max-width: 1400px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
         h1 {{ color: #333; font-size: 1.5em; margin-top: 0; }}
-        .table-wrapper {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
-        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; min-width: 700px; }}
-        th {{ background: #4285f4; color: white; padding: 12px 8px; text-align: left; font-size: 0.9em; }}
-        td {{ padding: 10px 8px; border: 1px solid #ddd; vertical-align: top; }}
-        tr:hover {{ background: #f8f9fa; }}
+        .table-wrapper {{ overflow: auto; -webkit-overflow-scrolling: touch; max-height: calc(100vh - 120px); position: relative; }}
+        table {{ border-collapse: collapse; width: 100%; margin-top: 20px; min-width: 600px; }}
+        
+        /* Sticky header row */
+        th {{ 
+            background: #4285f4; 
+            color: white; 
+            padding: 12px 8px; 
+            text-align: left; 
+            font-size: 0.9em; 
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }}
+        
+        /* Sticky first column (Position) */
+        td:first-child,
+        th:first-child {{            position: sticky;
+            left: 0;
+            z-index: 5;
+            background: #f8f9fa;
+        }}
+        
+        /* Top-left cell gets highest z-index */
+        th:first-child {{            z-index: 15;
+            background: #4285f4;
+        }}
+        
+        td {{ padding: 10px 8px; border: 1px solid #ddd; vertical-align: top; background: white; }}
+        tr:hover td {{ background: #f8f9fa; }}
+        tr:hover td:first-child {{ background: #e9ecef; }}
+        
         .position-cell {{ font-weight: bold; background: #f8f9fa; font-size: 0.9em; }}
         .slot-cell {{ min-height: 50px; }}
         .volunteer-list {{ margin: 5px 0; }}
@@ -151,6 +178,9 @@ namespace ChurchSecurityScheduler
             }}
             h1 {{
                 font-size: 1.2em;
+            }}
+            .table-wrapper {{
+                max-height: calc(100vh - 100px);
             }}
             th {{
                 padding: 8px 4px;
@@ -180,13 +210,16 @@ namespace ChurchSecurityScheduler
                 font-size: 0.8em;
             }}
             table {{
-                min-width: 600px;
+                min-width: 500px;
             }}
         }}
         
         @media (max-width: 480px) {{
             h1 {{
                 font-size: 1em;
+            }}
+            .table-wrapper {{
+                max-height: calc(100vh - 80px);
             }}
             th {{
                 padding: 6px 3px;
@@ -210,7 +243,7 @@ namespace ChurchSecurityScheduler
                 font-size: 0.65em;
             }}
             table {{
-                min-width: 550px;
+                min-width: 450px;
             }}
         }}
     </style>
@@ -232,22 +265,23 @@ namespace ChurchSecurityScheduler
                 foreach (var pos in schedule.Positions)
                 {
                     var position = pos.Position;
-
+                    
                     // Parse comma-separated volunteers
-                    var volunteers830 = string.IsNullOrWhiteSpace(pos.TimeSlot8_30)
-                        ? new List<string>()
+                    var volunteers830 = string.IsNullOrWhiteSpace(pos.TimeSlot8_30) 
+                        ? new List<string>() 
                         : pos.TimeSlot8_30.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
-
-                    var volunteers945 = string.IsNullOrWhiteSpace(pos.TimeSlot9_45)
-                        ? new List<string>()
+                    
+                    var volunteers945 = string.IsNullOrWhiteSpace(pos.TimeSlot9_45) 
+                        ? new List<string>() 
                         : pos.TimeSlot9_45.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
-
-                    var volunteers1100 = string.IsNullOrWhiteSpace(pos.TimeSlot11_00)
-                        ? new List<string>()
+                    
+                    var volunteers1100 = string.IsNullOrWhiteSpace(pos.TimeSlot11_00) 
+                        ? new List<string>() 
                         : pos.TimeSlot11_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
-
-                    var volunteers600 = string.IsNullOrWhiteSpace(pos.TimeSlot6_00)
-                        ? new List<string>()
+                    
+                    // ✅ Add this parsing for 6:00 PM
+                    var volunteers600 = string.IsNullOrWhiteSpace(pos.TimeSlot6_00) 
+                        ? new List<string>() 
                         : pos.TimeSlot6_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
 
                     html += $@"
@@ -273,8 +307,7 @@ namespace ChurchSecurityScheduler
         </div>
     </div>
     <script>
-        function addPerson(position, timeSlot, currentNames) {{
-            const name = prompt('Enter volunteer name:');
+        function addPerson(position, timeSlot, currentNames) {{            const name = prompt('Enter volunteer name:');
             if (name !== null && name.trim() !== '') {{
                 const newNames = currentNames ? currentNames + ', ' + name.trim() : name.trim();
                 window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=' + encodeURIComponent(newNames);
