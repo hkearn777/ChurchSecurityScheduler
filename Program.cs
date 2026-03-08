@@ -62,6 +62,9 @@ namespace ChurchSecurityScheduler
         <h3>Existing Schedules</h3>
         <div class='date-list'>";
 
+                var today = DateTime.Today;
+                var futureSchedulesCount = 0;
+
                 if (dates.Count == 0)
                 {
                     html += "<p>No schedules created yet. Create your first one above!</p>";
@@ -71,8 +74,19 @@ namespace ChurchSecurityScheduler
                     foreach (var date in dates)
                     {
                         var dateObj = DateTime.Parse(date);
-                        var dayOfWeek = dateObj.ToString("dddd");
-                        html += $"<div class='date-item' onclick=\"window.location.href='/schedule/{date}'\">{date} <span class='day-of-week'>({dayOfWeek})</span></div>";
+
+                        // Only show current and future schedules
+                        if (dateObj >= today)
+                        {
+                            futureSchedulesCount++;
+                            var dayOfWeek = dateObj.ToString("dddd");
+                            html += $"<div class='date-item' onclick=\"window.location.href='/schedule/{date}'\">{date} <span class='day-of-week'>({dayOfWeek})</span></div>";
+                        }
+                    }
+
+                    if (futureSchedulesCount == 0)
+                    {
+                        html += "<p>No upcoming schedules. Create a new one above!</p>";
                     }
                 }
 
@@ -137,14 +151,16 @@ namespace ChurchSecurityScheduler
         
         /* Sticky first column (Position) */
         td:first-child,
-        th:first-child {{            position: sticky;
+        th:first-child {{
+            position: sticky;
             left: 0;
             z-index: 5;
             background: #f8f9fa;
         }}
         
         /* Top-left cell gets highest z-index */
-        th:first-child {{            z-index: 15;
+        th:first-child {{
+            z-index: 15;
             background: #4285f4;
         }}
         
@@ -307,7 +323,8 @@ namespace ChurchSecurityScheduler
         </div>
     </div>
     <script>
-        function addPerson(position, timeSlot, currentNames) {{            const name = prompt('Enter volunteer name:');
+        function addPerson(position, timeSlot, currentNames) {{
+            const name = prompt('Enter volunteer name:');
             if (name !== null && name.trim() !== '') {{
                 const newNames = currentNames ? currentNames + ', ' + name.trim() : name.trim();
                 window.location.href = '/schedule/{date}/update?position=' + encodeURIComponent(position) + '&timeSlot=' + timeSlot + '&name=' + encodeURIComponent(newNames);
