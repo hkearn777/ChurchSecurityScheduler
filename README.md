@@ -84,7 +84,7 @@ The application will be available at http://localhost:5000 (or the port specifie
 ### Managing Volunteers
 
 1. Click on a date from the existing schedules list
-2. Click "+ Add Person" in any position/time slot to add a volunteer
+2. Click "+ Person" in any position/time slot to add a volunteer
 3. Enter the volunteer's name in the prompt
 4. To add multiple volunteers to the same slot, simply add more people - they'll be displayed on separate lines
 5. Click "Remove" next to a volunteer's name to remove them individually

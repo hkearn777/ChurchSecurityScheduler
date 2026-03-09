@@ -178,7 +178,7 @@ namespace ChurchSecurityScheduler
         .back-link:hover {{ text-decoration: underline; }}
         .btn {{ padding: 8px 12px; background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; white-space: nowrap; }}
         .btn:hover {{ background: #3367d6; }}
-        .btn-small {{ padding: 5px 8px; font-size: 0.75em; }}
+        .btn-small {{ padding: 4px 8px; font-size: 1.1em; min-width: 24px; line-height: 1; }}
         .btn-remove {{ background: #d93025; }}
         .btn-remove:hover {{ background: #b52a1f; }}
         .btn-add {{ background: #34a853; width: 100%; margin-top: 5px; }}
@@ -377,14 +377,14 @@ namespace ChurchSecurityScheduler
                     html += $@"
                     <div class='volunteer-item'>
                         <span class='volunteer-name'>{volunteer}</span>
-                        <button class='btn btn-small btn-remove' onclick=""removePerson('{position}', '{timeSlot}', '{escapedVolunteer}', '{escapedNames}')"">Remove</button>
+                        <button class='btn btn-small btn-remove' onclick=""removePerson('{position}', '{timeSlot}', '{escapedVolunteer}', '{escapedNames}')"" title=""Remove {volunteer}"">×</button>
                     </div>";
                 }
             }
             
             var currentNamesForAdd = volunteers.Count > 0 ? string.Join(", ", volunteers).Replace("'", "\\'") : "";
             html += $@"
-                <button class='btn btn-add' onclick=""addPerson('{position}', '{timeSlot}', '{currentNamesForAdd}')"">+ Add Person</button>
+                <button class='btn btn-add' onclick=""addPerson('{position}', '{timeSlot}', '{currentNamesForAdd}')"">+ Person</button>
             </div>";
             
             return html;
