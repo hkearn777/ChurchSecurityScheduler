@@ -38,6 +38,8 @@ namespace ChurchSecurityScheduler
         .day-of-week { color: #666; font-weight: normal; margin-left: 10px; }
         .btn { display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; border: none; font-size: 1em; cursor: pointer; }
         .btn:hover { background: #3367d6; }
+        .threat-assessment-btn { display: inline-block; padding: 12px 24px; background: #dc3545; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; border: none; font-size: 1em; cursor: pointer; font-weight: bold; }
+        .threat-assessment-btn:hover { background: #c82333; }
         input[type='date'] { padding: 10px; font-size: 1em; border: 1px solid #ddd; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; }
         
         @media (max-width: 600px) {
@@ -51,6 +53,11 @@ namespace ChurchSecurityScheduler
 <body>
     <div class='container'>
         <h1>🛡️ Church Security Scheduler</h1>
+        
+        <a href='https://www.christianwarriortraining.com/p/current-church-security-threat-level' target='_blank' class='threat-assessment-btn'>
+            ⚠️ Threat Assessment
+        </a>
+        
         <p>Select a date to view or create a security schedule:</p>
         
         <h3>Create New Schedule</h3>

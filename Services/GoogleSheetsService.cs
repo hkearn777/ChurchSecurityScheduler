@@ -318,4 +318,5 @@ namespace ChurchSecurityScheduler.Services
             return await LoadPositionsFromSheetAsync();
         }
     }
+
 }
