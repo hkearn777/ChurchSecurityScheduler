@@ -58,15 +58,8 @@ namespace ChurchSecurityScheduler
         <a href='/threat-assessment' target='_blank' class='threat-assessment-btn'>
             ⚠️ Threat Assessment
         </a>
+        <br>Our Standard: <i>Discernment, not alarm</i></br>
         
-        <p>Select a date to view or create a security schedule:</p>
-        
-        <h3>Create New Schedule</h3>
-        <form method='get' action='/schedule/create'>
-            <input type='date' name='date' required>
-            <button type='submit' class='btn'>Create Schedule</button>
-        </form>
-
         <h3>Existing Schedules</h3>
         <div class='date-list'>";
 
@@ -100,6 +93,15 @@ namespace ChurchSecurityScheduler
 
                 html += @"
         </div>
+
+        <h3>Create New Schedule</h3>
+        <br>Select a date and then click Create Schedule button.</br>        
+        <form method='get' action='/schedule/create'>
+            <input type='date' name='date' required>
+            <button type='submit' class='btn'>Create Schedule</button>
+        </form>
+
+
     </div>
 </body>
 </html>";
