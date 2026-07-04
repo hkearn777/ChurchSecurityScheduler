@@ -11,6 +11,7 @@ namespace ChurchSecurityScheduler
 
             // Add services
             builder.Services.AddSingleton<GoogleSheetsService>();
+            builder.Services.AddSingleton<GoogleDriveService>();
 
             var app = builder.Build();
 
@@ -54,7 +55,7 @@ namespace ChurchSecurityScheduler
     <div class='container'>
         <h1>🛡️ Church Security Scheduler</h1>
         
-        <a href='https://www.christianwarriortraining.com/p/current-church-security-threat-level' target='_blank' class='threat-assessment-btn'>
+        <a href='/threat-assessment' target='_blank' class='threat-assessment-btn'>
             ⚠️ Threat Assessment
         </a>
         
@@ -104,6 +105,23 @@ namespace ChurchSecurityScheduler
 </html>";
 
                 return Results.Text(html, "text/html");
+            });
+
+            // Threat Assessment PDF endpoint
+            app.MapGet("/threat-assessment", async (HttpContext context, GoogleDriveService driveService) =>
+            {
+                var fileResult = await driveService.GetFileByNameAsync("Security Cwt_Rollcall.pdf");
+
+                if (fileResult == null)
+                {
+                    return Results.NotFound("Threat assessment file not found.");
+                }
+
+                var (fileStream, fileName) = fileResult.Value;
+
+                // Set Content-Disposition to inline so PDF opens in browser tab instead of downloading
+                context.Response.Headers["Content-Disposition"] = "inline";
+                return Results.File(fileStream, "application/pdf");
             });
 
             // Create new schedule
