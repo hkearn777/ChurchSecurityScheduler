@@ -123,6 +123,9 @@ namespace ChurchSecurityScheduler
 
                 // Set Content-Disposition to inline so PDF opens in browser tab instead of downloading
                 context.Response.Headers["Content-Disposition"] = "inline";
+                context.Response.Headers["Pragma"] = "no-cache";
+                context.Response.Headers["Expires"] = "0";
+
                 return Results.File(fileStream, "application/pdf");
             });
 

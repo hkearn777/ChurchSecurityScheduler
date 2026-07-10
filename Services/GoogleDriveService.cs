@@ -61,10 +61,11 @@ namespace ChurchSecurityScheduler.Services
             {
                 var service = await GetDriveServiceAsync();
 
-                // Search for the file by name
+                // Search for the file by name, ordered by modified date (newest first)
                 var listRequest = service.Files.List();
                 listRequest.Q = $"name='{fileName}' and trashed=false";
-                listRequest.Fields = "files(id, name, mimeType)";
+                listRequest.Fields = "files(id, name, mimeType, modifiedTime)";
+                listRequest.OrderBy = "modifiedTime desc";  // Most recently modified first
 
                 var files = await listRequest.ExecuteAsync();
 
@@ -76,7 +77,7 @@ namespace ChurchSecurityScheduler.Services
 
                 // Get the first matching file (most recent if duplicates exist)
                 var file = files.Files[0];
-                _logger.LogInformation($"Found file: {file.Name} (ID: {file.Id})");
+                _logger.LogInformation($"Found file: {file.Name} (ID: {file.Id}, Modified: {file.ModifiedTimeDateTimeOffset})");
 
                 // Download the file
                 var request = service.Files.Get(file.Id);
