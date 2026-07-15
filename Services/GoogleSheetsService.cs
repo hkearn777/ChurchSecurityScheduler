@@ -134,7 +134,9 @@ namespace ChurchSecurityScheduler.Services
             foreach (var sheet in spreadsheet.Sheets)
             {
                 // Exclude "Positions" tab and "Template" from date list
-                if (sheet.Properties.Title != "Template" && sheet.Properties.Title != "Positions")
+                if (sheet.Properties.Title != "Template" &&
+                    sheet.Properties.Title != "Positions" &&
+                    sheet.Properties.Title != "Log")
                 {
                     dates.Add(sheet.Properties.Title);
                 }
@@ -241,6 +243,7 @@ namespace ChurchSecurityScheduler.Services
                 await updateRequest.ExecuteAsync();
 
                 _logger.LogInformation($"Created new sheet for date: {date} with {positions.Count} positions");
+                await LogChangeAsync("NEW", date, "", "", "");
                 return true;
             }
             catch (Exception ex)
@@ -265,6 +268,7 @@ namespace ChurchSecurityScheduler.Services
                     return false;
                 }
 
+                string currentValue = "";
                 // Find the exact row index by searching through actual data
                 var rowIndex = -1;
                 for (int i = 0; i < schedule.Positions.Count; i++)
@@ -272,6 +276,15 @@ namespace ChurchSecurityScheduler.Services
                     if (schedule.Positions[i].Position.Equals(position, StringComparison.OrdinalIgnoreCase))
                     {
                         rowIndex = i + 3; // +3 because: 1-based, +1 for title row, +1 for header row
+                        // Get the current value BEFORE we update it
+                        currentValue = timeSlot switch
+                        {
+                            "8:30" => schedule.Positions[i].TimeSlot8_30,
+                            "9:45" => schedule.Positions[i].TimeSlot9_45,
+                            "11:00" => schedule.Positions[i].TimeSlot11_00,
+                            "6:00" => schedule.Positions[i].TimeSlot6_00,
+                            _ => ""
+                        };
                         break;
                     }
                 }
@@ -303,6 +316,29 @@ namespace ChurchSecurityScheduler.Services
                 await updateRequest.ExecuteAsync();
 
                 _logger.LogInformation($"Updated {position} at {timeSlot} for {date} to {volunteerName} in cell {column}{rowIndex}");
+
+                // Determine action and log appropriately
+                var wasEmpty = string.IsNullOrWhiteSpace(currentValue);
+                var isNowEmpty = string.IsNullOrWhiteSpace(volunteerName);
+
+                if (!wasEmpty && !isNowEmpty)
+                {
+                    // Replacing one person with another - log DELETE then ADD
+                    await LogChangeAsync("DELETE", date, position, timeSlot, currentValue);
+                    await LogChangeAsync("ADD", date, position, timeSlot, volunteerName);
+                }
+                else if (wasEmpty && !isNowEmpty)
+                {
+                    // Adding a person to an empty slot
+                    await LogChangeAsync("ADD", date, position, timeSlot, volunteerName);
+                }
+                else if (!wasEmpty && isNowEmpty)
+                {
+                    // Removing a person
+                    await LogChangeAsync("DELETE", date, position, timeSlot, currentValue);
+                }
+                // If both empty, nothing to log
+
                 return true;
             }
             catch (Exception ex)
@@ -316,6 +352,102 @@ namespace ChurchSecurityScheduler.Services
         public async Task<List<string>> GetPositionsAsync()
         {
             return await LoadPositionsFromSheetAsync();
+        }
+
+        private async Task LogChangeAsync(string action, string scheduleDate, string position, string timeSlot, string person)
+        {
+            try
+            {
+                var service = await GetSheetsServiceAsync();
+                var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+
+                // Make sure Log tab exists first
+                await EnsureLogTabExistsAsync();
+
+                // Create timestamp in your requested format
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                // Build the log row
+                var range = "Log!A:F";
+                var valueRange = new ValueRange
+                {
+                    Values = new List<IList<object>>
+            {
+                new List<object> { timestamp, action, scheduleDate, position, timeSlot, person }
+            }
+                };
+
+                // Append to the Log tab
+                var appendRequest = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, range);
+                appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
+                await appendRequest.ExecuteAsync();
+
+                _logger.LogInformation($"Logged {action} for {scheduleDate}: {position} {timeSlot} {person}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error logging change to Log tab");
+                throw; // IMPORTANT: Re-throw to prevent the change if logging fails
+            }
+        }
+            
+        private async Task EnsureLogTabExistsAsync()
+        {
+            try
+            {
+                var service = await GetSheetsServiceAsync();
+                var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+
+                // Check if Log tab already exists
+                var spreadsheet = await service.Spreadsheets.Get(spreadsheetId).ExecuteAsync();
+                var logSheetExists = spreadsheet.Sheets.Any(s => s.Properties.Title == "Log");
+
+                if (!logSheetExists)
+                {
+                    _logger.LogInformation("Log tab does not exist, creating it...");
+
+                    // Step 1: Create the tab
+                    var addSheetRequest = new BatchUpdateSpreadsheetRequest
+                    {
+                        Requests = new List<Request>
+                {
+                    new Request
+                    {
+                        AddSheet = new AddSheetRequest
+                        {
+                            Properties = new SheetProperties
+                            {
+                                Title = "Log"
+                            }
+                        }
+                    }
+                }
+                    };
+
+                    await service.Spreadsheets.BatchUpdate(addSheetRequest, spreadsheetId).ExecuteAsync();
+
+                    // Step 2: Add the header row
+                    var range = "Log!A1:F1";
+                    var valueRange = new ValueRange
+                    {
+                        Values = new List<IList<object>>
+                {
+                    new List<object> { "TimeStamp", "Action", "ScheduleDate", "Position", "TimeSlot", "Person" }
+                }
+                    };
+
+                    var updateRequest = service.Spreadsheets.Values.Update(valueRange, spreadsheetId, range);
+                    updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+                    await updateRequest.ExecuteAsync();
+
+                    _logger.LogInformation("Log tab created with headers");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ensuring Log tab exists");
+                throw; // Prevent operations if we can't set up logging
+            }
         }
     }
 
