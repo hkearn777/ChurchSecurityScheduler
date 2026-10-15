@@ -153,6 +153,18 @@ namespace ChurchSecurityScheduler
                     return Results.Text("<h1>Schedule not found</h1><a href='/'>← Back</a>", "text/html");
                 }
 
+                // Read the header titles from the sheet (B2:E2). Fallbacks handled in service.
+                var headers = await sheetsService.GetTimeSlotHeadersAsync(date);
+
+                // --- compute encoded headers BEFORE building the big $@ string
+                var h0 = System.Net.WebUtility.HtmlEncode(headers.ElementAtOrDefault(0) ?? "8:30 AM");
+                var h1 = System.Net.WebUtility.HtmlEncode(headers.ElementAtOrDefault(1) ?? "9:45 AM");
+                var h2 = System.Net.WebUtility.HtmlEncode(headers.ElementAtOrDefault(2) ?? "11:00 AM");
+                var h3 = System.Net.WebUtility.HtmlEncode(headers.ElementAtOrDefault(3) ?? "6:00 PM");
+
+                // Ensure we always have 4 entries
+                while (headers.Count < 4) headers.AddRange(new[] { "?", "?", "?", "?" }.Where((_, i) => headers.Count < 4));
+                
                 var html = $@"
 <!DOCTYPE html>
 <html>
@@ -302,10 +314,10 @@ namespace ChurchSecurityScheduler
         <table>
             <tr>
                 <th>Position</th>
-                <th>8:30 AM</th>
-                <th>9:45 AM</th>
-                <th>11:00 AM</th>
-                <th>6:00 PM</th>
+                <th>{h0}</th>
+                <th>{h1}</th>
+                <th>{h2}</th>
+                <th>{h3}</th>
             </tr>";
 
                 foreach (var pos in schedule.Positions)
@@ -325,7 +337,6 @@ namespace ChurchSecurityScheduler
                         ? new List<string>() 
                         : pos.TimeSlot11_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();
                     
-                    // ✅ Add this parsing for 6:00 PM
                     var volunteers600 = string.IsNullOrWhiteSpace(pos.TimeSlot6_00) 
                         ? new List<string>() 
                         : pos.TimeSlot6_00.Split(',').Select(v => v.Trim()).Where(v => !string.IsNullOrWhiteSpace(v)).ToList();

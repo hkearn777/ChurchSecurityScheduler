@@ -354,6 +354,49 @@ namespace ChurchSecurityScheduler.Services
             return await LoadPositionsFromSheetAsync();
         }
 
+        // PUBLIC method to get time slot headers (in case you need it elsewhere)
+        public async Task<List<string>> GetTimeSlotHeadersAsync(string date)
+        {
+            var service = await GetSheetsServiceAsync();
+            var spreadsheetId = _configuration["GoogleSheets:SpreadsheetId"];
+            var range = $"'{date}'!B2:E2"; // B2..E2 contain the displayed titles
+
+            try
+            {
+                var request = service.Spreadsheets.Values.Get(spreadsheetId, range);
+                var response = await request.ExecuteAsync();
+                var values = response.Values;
+
+                if (values == null || values.Count == 0)
+                {
+                    return new List<string> { "8:30 AM", "9:45 AM", "11:00 AM", "6:00 PM" };
+                }
+
+                var firstRow = values[0];
+                var headers = new List<string>();
+
+                for (int i = 0; i < 4; i++)
+                {
+                    headers.Add(firstRow.Count > i ? (firstRow[i]?.ToString() ?? "") : "");
+                }
+
+                // Provide sensible defaults if any are empty
+                var defaults = new[] { "8:30 AM", "9:45 AM", "11:00 AM", "6:00 PM" };
+                for (int i = 0; i < 4; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(headers[i]))
+                        headers[i] = defaults[i];
+                }
+
+                return headers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error reading time slot headers for date: {date}. Using defaults.");
+                return new List<string> { "8:30 AM", "9:45 AM", "11:00 AM", "6:00 PM" };
+            }
+        }
+
         private async Task LogChangeAsync(string action, string scheduleDate, string position, string timeSlot, string person)
         {
             try
